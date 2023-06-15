@@ -114,7 +114,7 @@ def layout():
 
     # Update every 5 minutes
     dcc.Interval(id='interval-component', interval=5*60000, n_intervals=0),
-    dcc.Store(id='Signal-1'),
-    dcc.Store(id='Signal-2')
+    dcc.Store(id='all-data'),
+    dcc.Store(id='filtered-data')
 
   ], fluid=True)
