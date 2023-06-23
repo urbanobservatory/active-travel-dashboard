@@ -13,16 +13,16 @@ def layout():
     dbc.Row([
       dbc.Col([
         html.Div([
-          html.Label('Filter by time (hours ago)'),
-          dcc.RangeSlider(
-            id='Filter-1',
-            min=-12, 
-            max=0, 
-            step=1,
-            count=1, 
-            value=[-12, 0]
-          ),
-          html.Br(),
+          # html.Label('Filter by time (hours ago)'),
+          # dcc.RangeSlider(
+          #   id='Filter-1',
+          #   min=-12, 
+          #   max=0, 
+          #   step=1,
+          #   count=1, 
+          #   value=[-12, 0]
+          # ),
+          # html.Br(),
           html.Label('Filter by category'),
           dcc.Dropdown(
             id='Filter-2',
@@ -100,7 +100,8 @@ def layout():
         html.Div([
           dcc.Graph(
             id='Graph-3'
-          )
+          ),
+          dcc.Tooltip(id='Graph-3-tooltip')
         ], className='box')
       ], xs=12, sm=12, md=12, lg=7, xl=7),
       dbc.Col([
@@ -108,6 +109,7 @@ def layout():
           dcc.Graph(
             id='Graph-2'
           )
+          # html.Img(id='image')
         ], className='box')
       ], xs=12, sm=12, md=12, lg=5, xl=5)
     ], className='g-5'),

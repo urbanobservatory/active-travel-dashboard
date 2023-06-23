@@ -1,6 +1,8 @@
+import os
 import plotly.express as px
 import plotly.graph_objects as go
 import themes
+from dash import html
 
 def pxBar(df, filter_val):
     df['text']=df['location'].astype(str)+', '+df['dir'].astype(str)
@@ -42,6 +44,7 @@ def goScatterGeo(df):
                 lat=df['lat'].median(), 
                 lon=df['lon'].median()), 
             'zoom': 9.7 })
+    fig.update_traces(hoverinfo="none", hovertemplate=None)
     fig = themes.one(fig)
     return fig
 
@@ -78,3 +81,54 @@ def goIndicator(df, filter_val):
     ))
     fig = themes.one(fig)
     return fig
+
+def image(path):
+    fig = go.Figure()
+    w = 1920
+    h = 1080
+    scale = 0.3
+    fig.add_trace(go.Scatter(
+        x=[0, w*scale],
+        y=[0, h*scale],
+        mode='markers',
+        marker_opacity=0
+    ))
+    fig.update_xaxes(visible=False, range=[0, w*scale])
+    fig.update_yaxes(visible=False, range=[0, h*scale], scaleanchor='x')
+    fig.add_layout_image(dict(
+        x=0,
+        sizex=w*scale,
+        y=h*scale,
+        sizey=h*scale,
+        xref="x",
+        yref="y",
+        opacity=1.0,
+        layer="below",
+        sizing="stretch",
+        source=path
+    ))
+    fig.update_layout(
+        width=w*scale,
+        height=h*scale,
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+    )
+    return fig
+
+def image_hover(hoverData):
+    pt = hoverData['points'][0]
+    location = pt['text'].split(':')[0]
+    bbox = pt['bbox']
+
+    if os.path.exists(f'assets/{location}.jpg'):
+        path = f'assets/{location}.jpg'
+    else:
+        path = 'assets/No_image_available.png'
+
+    children = [
+        html.Div(children=[
+            html.Img(src=path, style={'width': "100%"}),
+            html.H5(pt['text'], style={'text-align': 'left'}),
+        ],
+        style={'width': '200px', 'white-space': 'normal'})
+    ]
+    return bbox, children

@@ -1,6 +1,6 @@
 import os
 import dash
-from dash import ctx
+from dash import ctx, no_update
 from dash.dependencies import Output, Input, State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -37,19 +37,19 @@ def get_data(n):
     Input('all-data', 'data'), 
     Input('Filter-2', 'value'),
     Input('Filter-3', 'value'))
-def chained_filter(data, filter_2_val, filter_3_val):
+def chained_filter(data, f2, f3):
     data = pd.read_json(data, orient='split')
-    data = utils.filter_logic(data, filter_2_val, filter_3_val)
-    data = utils.assign_colors(data, filter_2_val)
+    data = utils.filter_logic(data, f2, f3)
+    data = utils.assign_colors(data, f2)
     return data.to_json(orient='split', date_format='iso')
 
 @app.callback(
     Output('Filter-3', 'options'),
     Input('all-data', 'data'), 
     Input('Filter-2', 'value'))
-def update_filter_3(data, filter_2_val):
+def update_filter_3(data, f2):
     df = pd.read_json(data, orient='split')
-    options = df[filter_2_val].unique().tolist()
+    options = df[f2].unique().tolist()
     return options
 
 @app.callback(
@@ -84,30 +84,48 @@ def update_indicator_4(data):
     Output('Graph-1', 'figure'),
     Input('filtered-data', 'data'), 
     Input('Filter-2', 'value'))
-def update_graph_1(data, filter_2_val):
+def update_graph_1(data, f2):
     df = pd.read_json(data, orient='split')
-    return figures.pxBar(df, filter_2_val)
+    return figures.pxBar(df, f2)
 
 @app.callback(
     Output('Graph-2', 'figure'),
     Input('filtered-data', 'data'), 
     Input('Filter-2', 'value'))
-def update_graph_2(data, filter_2_val):
+def update_graph_2(data, f2):
     df = pd.read_json(data, orient='split')
     df = utils.select_latest_times(df)
-    fig = figures.pxPie(df, filter_2_val)
+    fig = figures.pxPie(df, f2)
     return fig
 
 @app.callback(
     Output('Graph-3', 'figure'),
     Input('filtered-data', 'data'),
     Input('Filter-2', 'value'))
-def update_graph_3(data, filter_2_val):
+def update_graph_3(data, f2):
     df = pd.read_json(data, orient='split')
     df = utils.total_per_location(df)
     df = utils.select_latest_times(df)
     return figures.goScatterGeo(df)
 
+# https://community.plotly.com/t/displaying-image-on-point-hover-in-plotly/9223/15
+@app.callback(
+    Output('Graph-3-tooltip', 'show'),
+    Output('Graph-3-tooltip', 'bbox'),
+    Output('Graph-3-tooltip', 'children'),
+    Input('Graph-3', 'hoverData'),  
+    Input('Filter-2', 'value'),
+    Input('Filter-3', 'value')
+)
+def display_hover(hoverData, f2, f3):
+    if 'Filter-2' == ctx.triggered_id \
+    or 'Filter-3' == ctx.triggered_id \
+    or hoverData is None:
+        return False, no_update, no_update
+    else:
+        bbox, children = figures.image_hover(hoverData)
+        return True, bbox, children
+    
 if __name__ == "__main__":
     if str(os.getenv('debug')) == 'True': d=True
     else: d=False
