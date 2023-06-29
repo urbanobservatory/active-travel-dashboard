@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  active-travel-dash:
+    build: dashboard
+    restart: on-failure
+    ports:
+      - 8080:80
+    volumes:
+      - .env:/env/.env
+      - ./cache/:/cache/
+      - ./python_lib:/usr/local/lib/python3.9/site-packages/dash_data
+
+  active-travel-cache:
+    build: python_cache
+    restart: on-failure
+    volumes:
+      - .env:/env/.env
+      - ./cache/:/cache/
+      - ./python_lib:/usr/local/lib/python3.9/site-packages/dash_data

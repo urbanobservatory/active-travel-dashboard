@@ -9,9 +9,9 @@ import warnings
 import pandas as pd
 import requests
 import datetime
-import utils
+from dash_data import utils
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('/env/.env')
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -89,7 +89,7 @@ def run():
 
     df = process_data(df)
 
-    # df.to_csv('test/test2.csv')
+    df.to_csv('/cache/test3.csv')
 
     return df
 

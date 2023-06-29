@@ -163,3 +163,4 @@ test
 images/*
 raw_images/*
 *.jpg
+cache

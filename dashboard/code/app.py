@@ -6,12 +6,12 @@ import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import htmlLayout
 import figures
-import utils
-import get_video_counts_and_locations
+from dash_data import utils
+# import python_cache.code.get_video_counts_and_locations as get_video_counts_and_locations
 import pandas as pd
 from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('/env/.env')
 
 app = dash.Dash(
     __name__, 
@@ -28,10 +28,10 @@ app.layout = htmlLayout.layout()
     Output('all-data', 'data'), 
     Input('interval-component', 'n_intervals'))
 def get_data(n):
-    if str(os.getenv('test')) == 'True': 
-        data = pd.read_csv('test/test2.csv')
-    else: 
-        data = get_video_counts_and_locations.run()
+    # if str(os.getenv('test')) == 'True': 
+    data = pd.read_csv('/cache/test3.csv')
+    # else: 
+    #     data = get_video_counts_and_locations.run()
     return data.to_json(orient='split', date_format='iso')
 
 @app.callback(
@@ -140,4 +140,4 @@ def display_hover(hoverData, f2, f3):
 if __name__ == "__main__":
     if str(os.getenv('debug')) == 'True': d=True
     else: d=False
-    app.run_server(debug=d)
+    app.run_server(debug=d, host='0.0.0.0', port=80)
