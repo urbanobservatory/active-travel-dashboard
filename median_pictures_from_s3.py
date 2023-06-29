@@ -43,11 +43,16 @@ def get_images():
     for filename in os.listdir(local_folder):
         if '.jpg' in filename:
             img = cv2.imread(local_folder+filename)
-            img = cv2.resize(img, (0,0), fx=0.3, fy=0.3)
-            cv2.imwrite('assets/'+filename, img)
+            img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
+            cv2.imwrite(local_folder+filename, img)
 
 
 if __name__ == '__main__':
+    # TODO: Get images with timestamp attached to name.
+    # Delete images older than available data collected
+    # Set a time to collect new images each day (9am?), or if images have not
+    # already been collected for that day.
+    # Run as its own containerised service.
     get_images()
     
 

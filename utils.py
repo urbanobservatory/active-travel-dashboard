@@ -1,7 +1,9 @@
 import plotly.express as px
+import pandas as pd
 
 def total_per_location(df):
-    df = df.drop(columns=['dir','veh_class'])
+    # df = df.drop(columns=['dir','veh_class'])
+    df = df.drop(columns=['veh_class'])
     df = df.groupby(['location','dt','lat','lon'],as_index=False).agg({'value': 'sum'})
     return df
 
@@ -24,4 +26,10 @@ def filter_logic(df, filter_1, filter_2):
 def assign_colors(df, val):
     color = dict(zip(df[val].unique(), px.colors.qualitative.Light24_r))
     df['color'] = df[val].map(color)
+    return df
+
+def datetime_to_nearest_hour(df):
+    df['dt'] = df['dt'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+    df['dt'] = pd.to_datetime(df['dt'], format='%Y-%m-%d %H:%M:%S')
+    df['dt'] = df['dt'].dt.floor('H') #.floor for previous hour, .round for nearest hour
     return df

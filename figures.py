@@ -5,11 +5,47 @@ import themes
 from dash import html
 
 def pxBar(df, filter_val):
-    df['text']=df['location'].astype(str)+', '+df['dir'].astype(str)
-    fig = px.bar(df, x='dt', y='value', color=filter_val, hover_name='text',
-        color_discrete_map=dict(zip(df[filter_val], df['color'])))
+    df['text']=df['location'].astype(str)
+    fig = px.bar(
+        df, 
+        x='dt', 
+        y='value', 
+        color=filter_val, 
+        hover_name='text',
+        color_discrete_map=dict(zip(df[filter_val], df['color']))
+    )
     fig = themes.one(fig)
-    fig.update_layout(showlegend=False, transition_duration=500)
+    fig.update_layout(
+        title={'text': 'Active Travel Total', 'x': 0.5},
+        # showlegend=False,
+        transition_duration=500, 
+        xaxis_title=None, 
+        yaxis_title=None,
+        margin = {'t':60, 'b':50, 'l':50, 'r':50}
+    )
+    return fig
+
+def goScatter(df):
+    fig = go.Figure()
+    groups = df['veh_class'].unique()
+    for group in groups:
+        tdf = df[df['veh_class'] == group]
+        fig.add_trace(go.Scatter(
+            name=group, 
+            x=list(tdf['dt']), 
+            y=list(tdf['value']), 
+            xaxis='x', 
+            yaxis='y', 
+            text=tdf['value'].astype(str), 
+            mode='lines+markers',
+            line_shape='spline'
+        ))
+    fig.update_layout(
+        title={'text': df['location'].iloc[0]+' (48hrs)', 'x': 0.5},
+        margin = {'t':60, 'b':50, 'l':50, 'r':50},
+        transition_duration=500
+    )
+    fig = themes.one(fig)
     return fig
 
 def pxScatterGeo(df):
@@ -33,11 +69,10 @@ def goScatterGeo(df):
         )
     ))
     fig.update_layout(
-        title = {'text': 'Map', 'x': 0.5},
         autosize = True,
         transition_duration=500,
         # height = 1236,
-        margin = {'t':30, 'b':10, 'l':10, 'r':0},
+        margin = {'t':10, 'b':10, 'l':10, 'r':0},
         mapbox = {
             'style': 'carto-positron', 
             'center': go.layout.mapbox.Center(
@@ -67,8 +102,8 @@ def goIndicator(df, filter_val):
         value=df['location'].nunique()
     elif filter_val=='Vehicle Classes':
         value=df['veh_class'].nunique()
-    elif filter_val=='Directions':
-        value=df['dir'].nunique()
+    # elif filter_val=='Directions':
+    #     value=df['dir'].nunique()
     fig = go.Figure()
     fig.add_trace(go.Indicator(
         title = {'text':filter_val, 'align':'left'},

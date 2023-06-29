@@ -7,8 +7,9 @@ from dash.exceptions import PreventUpdate
 import htmlLayout
 import figures
 import utils
-import get_video_counts_and_locations as getData
+import get_video_counts_and_locations
 import pandas as pd
+from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -25,11 +26,12 @@ app.layout = htmlLayout.layout()
 
 @app.callback(
     Output('all-data', 'data'), 
-    Input('interval-component', 'n_intervals')
-)
+    Input('interval-component', 'n_intervals'))
 def get_data(n):
-    if str(os.getenv('test')) == 'True': data = pd.read_csv('test.csv')
-    else: data = getData.run()
+    if str(os.getenv('test')) == 'True': 
+        data = pd.read_csv('test/test2.csv')
+    else: 
+        data = get_video_counts_and_locations.run()
     return data.to_json(orient='split', date_format='iso')
 
 @app.callback(
@@ -38,10 +40,10 @@ def get_data(n):
     Input('Filter-2', 'value'),
     Input('Filter-3', 'value'))
 def chained_filter(data, f2, f3):
-    data = pd.read_json(data, orient='split')
-    data = utils.filter_logic(data, f2, f3)
-    data = utils.assign_colors(data, f2)
-    return data.to_json(orient='split', date_format='iso')
+    datas = pd.read_json(data, orient='split')
+    datas = utils.filter_logic(datas, f2, f3)
+    datas = utils.assign_colors(datas, f2)
+    return datas.to_json(orient='split', date_format='iso')
 
 @app.callback(
     Output('Filter-3', 'options'),
@@ -74,13 +76,6 @@ def update_indicator_3(data):
     return figures.goIndicator(df, 'Vehicle Classes')
 
 @app.callback(
-    Output('Indicator-4', 'figure'),
-    Input('filtered-data', 'data'))
-def update_indicator_4(data):
-    df = pd.read_json(data, orient='split')
-    return figures.goIndicator(df, 'Directions')
-
-@app.callback(
     Output('Graph-1', 'figure'),
     Input('filtered-data', 'data'), 
     Input('Filter-2', 'value'))
@@ -91,12 +86,29 @@ def update_graph_1(data, f2):
 @app.callback(
     Output('Graph-2', 'figure'),
     Input('filtered-data', 'data'), 
-    Input('Filter-2', 'value'))
-def update_graph_2(data, f2):
+    Input('Graph-1', 'hoverData'),
+    Input('Graph-3', 'hoverData'))
+def update_graph_2(data, g1, g3):
     df = pd.read_json(data, orient='split')
-    df = utils.select_latest_times(df)
-    fig = figures.pxPie(df, f2)
-    return fig
+    # TODO: PREVENT UPDATES WITH FILTER TRIGGER
+    if 'Filter-2' == ctx.triggered_id \
+    or 'Filter-3' == ctx.triggered_id:
+        raise PreventUpdate
+    elif 'filtered-data' == ctx.triggered_id:
+        random_df = df.sample().reset_index()
+        random_id = random_df['location'].iloc[0]
+        df = df.loc[df['location'] == random_id]
+    elif 'Graph-1' == ctx.triggered_id:
+        id = g1['points'][0]['hovertext'].split(':')[0]
+        df = df.loc[df['location'].isin([id])]
+    elif 'Graph-3' == ctx.triggered_id:
+        id = g3['points'][0]['text'].split(':')[0]
+        df = df.loc[df['location'].isin([id])]
+    df['dt'] = pd.to_datetime(df['dt'], format='%Y-%m-%d %H:%M:%S')
+    df.sort_values(by='dt', inplace = True)
+    mask = (df['dt'] > '2023-06-27 11:00:00') & (df['dt'] <= '2023-06-29 11:00:00') #TODO: Remove hard coding
+    df = df.loc[mask]
+    return figures.goScatter(df)
 
 @app.callback(
     Output('Graph-3', 'figure'),
@@ -115,8 +127,7 @@ def update_graph_3(data, f2):
     Output('Graph-3-tooltip', 'children'),
     Input('Graph-3', 'hoverData'),  
     Input('Filter-2', 'value'),
-    Input('Filter-3', 'value')
-)
+    Input('Filter-3', 'value'))
 def display_hover(hoverData, f2, f3):
     if 'Filter-2' == ctx.triggered_id \
     or 'Filter-3' == ctx.triggered_id \

@@ -5,7 +5,7 @@ def layout():
   return dbc.Container([
     dbc.Row([
       dbc.Col([html.H1(
-        'UO Live Video Analytics',
+        'Tyne and Wear Active Travel',
         className='text-center mb-4'
       )], width=12)
     ]),
@@ -13,35 +13,33 @@ def layout():
     dbc.Row([
       dbc.Col([
         html.Div([
-          # html.Label('Filter by time (hours ago)'),
+          # html.H3('Select day:'),
           # dcc.RangeSlider(
           #   id='Filter-1',
-          #   min=-12, 
+          #   min=-7, 
           #   max=0, 
           #   step=1,
           #   count=1, 
-          #   value=[-12, 0]
+          #   value=[-7, 0]
           # ),
           # html.Br(),
-          html.Label('Filter by category'),
-          dcc.Dropdown(
+          html.H3('Display by:'),
+          dcc.RadioItems(
             id='Filter-2',
             options=[
-              'veh_class', 
-              'location', 
-              'dir'
+                {'label': 'Vehicle Class', 'value': 'veh_class'},
+                {'label': 'Location', 'value': 'location'},
             ],
-            value='veh_class',
-            clearable=False
+            value='veh_class'
           ),
           html.Br(),
-          html.Label('Filter by sub-category'),
+          html.H3('Filter by:'),
           dcc.Dropdown(
             id='Filter-3',
             multi=True,
             placeholder='All'
           ),
-        ], className='box')
+        ], className='selection box')
       ], xs=12, sm=12, md=12, lg=4, xl=4),
       dbc.Col([
         dbc.Stack([
@@ -50,34 +48,34 @@ def layout():
               html.Div([
                 dcc.Graph(
                   id='Indicator-1', 
-                  style={'width':'300px','height':'100px'}
+                  style={'width':'400px','height':'100px'}
                 )
               ], className='box')
-            ], xs=12, sm=12, md=3, lg=3, xl=3),
+            ], xs=12, sm=12, md=4, lg=4, xl=4),
             dbc.Col([
               html.Div([
                 dcc.Graph(
                   id='Indicator-2', 
-                  style={'width':'300px','height':'100px'}
+                  style={'width':'400px','height':'100px'}
                 )
               ], className='box')
-            ], xs=12, sm=12, md=3, lg=3, xl=3),
+            ], xs=12, sm=12, md=4, lg=4, xl=4),
             dbc.Col([
               html.Div([
                 dcc.Graph(
                   id='Indicator-3', 
-                  style={'width':'300px','height':'100px'}
+                  style={'width':'400px','height':'100px'}
                 )
               ], className='box')
-            ], xs=12, sm=12, md=3, lg=3, xl=3),
-            dbc.Col([
-              html.Div([
-                dcc.Graph(
-                  id='Indicator-4', 
-                  style={'width':'300px','height':'100px'}
-                )
-              ], className='box')
-            ], xs=12, sm=12, md=3, lg=3, xl=3),
+            ], xs=12, sm=12, md=4, lg=4, xl=4),
+            # dbc.Col([
+            #   html.Div([
+            #     dcc.Graph(
+            #       id='Indicator-4', 
+            #       style={'width':'300px','height':'100px'}
+            #     )
+            #   ], className='box')
+            # ], xs=12, sm=12, md=3, lg=3, xl=3),
           ], justify='between'),
           dbc.Row([
             dbc.Col([
@@ -117,6 +115,6 @@ def layout():
     # Update every 5 minutes
     dcc.Interval(id='interval-component', interval=5*60000, n_intervals=0),
     dcc.Store(id='all-data'),
-    dcc.Store(id='filtered-data')
+    dcc.Store(id='filtered-data'),
 
   ], fluid=True)

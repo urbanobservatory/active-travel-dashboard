@@ -9,6 +9,7 @@ import warnings
 import pandas as pd
 import requests
 import datetime
+import utils
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -51,16 +52,24 @@ def get_data(url, user, token, location, from_s, to_s):
 #     response = requests.get(url=e, json=d)
 #     return response
 
+def process_data(df):
+    # drop direction field and aggregate counts by hour
+    df = df.drop('dir', axis=1)
+    df = utils.datetime_to_nearest_hour(df)
+    df = df.groupby(
+        ['location','dt','veh_class','lat','lon'], 
+        sort=False, 
+        as_index=False)['value'].sum()
+    return df
+
 def run():
     token = refresh_token(url,username,secret)  # a token is valid for 24hrs
-
     dfs = []
-
     week = 10080
     day = 1440
     offset = 720
 
-    for i in range(30, day, offset):
+    for i in range(30, week, offset):
         # get complete hours data
         past = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i+offset)).strftime("%Y-%m-%d %H:%M:00")
         current = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i)).strftime("%Y-%m-%d %H:%M:00")
@@ -78,10 +87,14 @@ def run():
 
     df = pd.concat(dfs)
 
-    # df.to_csv('test.csv')
+    df = process_data(df)
+
+    # df.to_csv('test/test2.csv')
 
     return df
 
-
 if __name__ == '__main__':
     df = run()
+
+    # Initialisation
+    #   Make list of days data don't have
