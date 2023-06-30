@@ -10,6 +10,7 @@ import pandas as pd
 import requests
 import datetime
 from dash_data import utils
+# import median_pictures_from_s3
 from dotenv import load_dotenv
 load_dotenv('/env/.env')
 
@@ -64,7 +65,6 @@ def process_data(df):
 
 def run():
     token = refresh_token(url,username,secret)  # a token is valid for 24hrs
-    dfs = []
     week = 10080
     day = 1440
     offset = 720
@@ -83,18 +83,14 @@ def run():
         df = pd.merge(df, ldf, on=['location'])
         df['dt'] = pd.to_datetime(df['dt'])
 
-        dfs.append(df)
-
-    df = pd.concat(dfs)
-
-    df = process_data(df)
-
-    df.to_csv('/cache/test3.csv')
-
-    return df
+        df = process_data(df)
+        df.to_csv(f'/cache/test{i}.csv')
 
 if __name__ == '__main__':
-    df = run()
-
-    # Initialisation
-    #   Make list of days data don't have
+    while True:
+        print('fetching data')
+        df = run()
+        # print('fetching images')
+        # median_pictures_from_s3.get_images()
+        print('sleeping')
+        time.sleep(300)

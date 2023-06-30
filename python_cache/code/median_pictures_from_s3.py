@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import cv2
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('/env/.env')
 
 local_folder = os.getenv('img_folder')  # where do you want downloaded images to go
 

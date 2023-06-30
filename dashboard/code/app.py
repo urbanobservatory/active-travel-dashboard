@@ -28,10 +28,10 @@ app.layout = htmlLayout.layout()
     Output('all-data', 'data'), 
     Input('interval-component', 'n_intervals'))
 def get_data(n):
-    # if str(os.getenv('test')) == 'True': 
-    data = pd.read_csv('/cache/test3.csv')
-    # else: 
-    #     data = get_video_counts_and_locations.run()
+    dfs = []
+    for file in os.listdir('/cache/'):
+        dfs.append(pd.read_csv('/cache/'+file))
+    data = pd.concat(dfs)
     return data.to_json(orient='split', date_format='iso')
 
 @app.callback(
