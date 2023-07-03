@@ -65,6 +65,7 @@ def run():
     offset = 720
 
     for i in range(30, week, offset):
+        print('fetching data: ', i)
         # get complete hours data
         past = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i+offset)).strftime("%Y-%m-%d %H:%M:00")
         current = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i)).strftime("%Y-%m-%d %H:%M:00")
@@ -83,7 +84,6 @@ def run():
 
 if __name__ == '__main__':
     while True:
-        print('fetching data')
         df = run()
         print('fetching images')
         median_pictures_from_s3.get_images()

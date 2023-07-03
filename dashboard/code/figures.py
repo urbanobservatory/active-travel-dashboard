@@ -17,7 +17,7 @@ def pxBar(df, filter_val):
     fig = themes.one(fig)
     fig.update_layout(
         title={'text': 'Active Travel Total', 'x': 0.5},
-        # showlegend=False,
+        showlegend=False,
         transition_duration=500, 
         xaxis_title=None, 
         yaxis_title=None,
@@ -38,7 +38,8 @@ def goScatter(df):
             yaxis='y', 
             text=tdf['value'].astype(str), 
             mode='lines+markers',
-            line_shape='spline'
+            line_shape='spline',
+            opacity = 0.5
         ))
     fig.update_layout(
         title={'text': df['location'].iloc[0]+' (48hrs)', 'x': 0.5},
