@@ -30,7 +30,8 @@ app.layout = htmlLayout.layout()
 def get_data(n):
     dfs = []
     for file in os.listdir('/cache/'):
-        dfs.append(pd.read_csv('/cache/'+file))
+        if '.csv' in file:
+            dfs.append(pd.read_csv('/cache/'+file))
     data = pd.concat(dfs)
     return data.to_json(orient='split', date_format='iso')
 
@@ -106,7 +107,8 @@ def update_graph_2(data, g1, g3):
         df = df.loc[df['location'].isin([id])]
     df['dt'] = pd.to_datetime(df['dt'], format='%Y-%m-%d %H:%M:%S')
     df.sort_values(by='dt', inplace = True)
-    mask = (df['dt'] > '2023-06-27 11:00:00') & (df['dt'] <= '2023-06-29 11:00:00') #TODO: Remove hard coding
+    start_date, end_date = utils.get_start_end_date(day_period=2)
+    mask = (df['dt'] > start_date) & (df['dt'] <= end_date)
     df = df.loc[mask]
     return figures.goScatter(df)
 
@@ -138,6 +140,8 @@ def display_hover(hoverData, f2, f3):
         return True, bbox, children
     
 if __name__ == "__main__":
-    if str(os.getenv('debug')) == 'True': d=True
-    else: d=False
+    if str(os.getenv('debug')) == 'True': 
+        d=True
+    else: 
+        d=False
     app.run_server(debug=d, host='0.0.0.0', port=80)

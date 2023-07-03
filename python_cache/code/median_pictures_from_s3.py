@@ -1,11 +1,11 @@
 import boto3
 import os
 import pandas as pd
-import cv2
+from dash_data import utils
 from dotenv import load_dotenv
 load_dotenv('/env/.env')
 
-local_folder = os.getenv('img_folder')  # where do you want downloaded images to go
+local_folder = '/assets/' #os.getenv('img_folder')  # where do you want downloaded images to go
 
 BLOB_NAME = os.getenv('BLOB_NAME')
 BLOB_ID = os.getenv('BLOB_ID')
@@ -40,11 +40,12 @@ def get_images():
         except:
             continue
 
-    for filename in os.listdir(local_folder):
-        if '.jpg' in filename:
-            img = cv2.imread(local_folder+filename)
-            img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
-            cv2.imwrite(local_folder+filename, img)
+    # for filename in os.listdir(local_folder):
+    #     if '.jpg' in filename:
+    #         utils.resize_img(local_folder+filename)
+            # img = cv2.imread(local_folder+filename)
+            # img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
+            # cv2.imwrite(local_folder+filename, img)
 
 
 if __name__ == '__main__':

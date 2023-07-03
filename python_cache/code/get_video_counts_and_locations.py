@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 import datetime
 from dash_data import utils
-# import median_pictures_from_s3
+import median_pictures_from_s3
 from dotenv import load_dotenv
 load_dotenv('/env/.env')
 
@@ -55,6 +55,7 @@ def get_data(url, user, token, location, from_s, to_s):
 
 def process_data(df):
     df = df.drop('dir', axis=1)
+    df = utils.aggregate(df)
     return df
 
 def run():
@@ -84,7 +85,7 @@ if __name__ == '__main__':
     while True:
         print('fetching data')
         df = run()
-        # print('fetching images')
-        # median_pictures_from_s3.get_images()
+        print('fetching images')
+        median_pictures_from_s3.get_images()
         print('sleeping')
         time.sleep(300)

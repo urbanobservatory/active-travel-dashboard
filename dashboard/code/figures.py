@@ -154,10 +154,11 @@ def image_hover(hoverData):
     location = pt['text'].split(':')[0]
     bbox = pt['bbox']
 
-    if os.path.exists(f'assets/{location}.jpg'):
-        path = f'assets/{location}.jpg'
+    if os.path.exists(f'/assets/{location}.jpg'):
+        print('exists')
+        path = f'/assets/{location}.jpg'
     else:
-        path = 'assets/No_image_available.png'
+        path = '/assets/No_image_available.png'
 
     children = [
         html.Div(children=[
