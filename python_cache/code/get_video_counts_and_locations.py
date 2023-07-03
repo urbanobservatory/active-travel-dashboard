@@ -32,7 +32,7 @@ def refresh_token(url, user, secret):
     return token
 
 def get_data(url, user, token, location, from_s, to_s):
-    e = url + '/traffic/counts'
+    e = url + '/traffic/counts1h'
     d = {
         'user': user,
         'token': token,
@@ -54,13 +54,7 @@ def get_data(url, user, token, location, from_s, to_s):
 #     return response
 
 def process_data(df):
-    # drop direction field and aggregate counts by hour
     df = df.drop('dir', axis=1)
-    df = utils.datetime_to_nearest_hour(df)
-    df = df.groupby(
-        ['location','dt','veh_class','lat','lon'], 
-        sort=False, 
-        as_index=False)['value'].sum()
     return df
 
 def run():

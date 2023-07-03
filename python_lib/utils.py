@@ -33,3 +33,11 @@ def datetime_to_nearest_hour(df):
     df['dt'] = pd.to_datetime(df['dt'], format='%Y-%m-%d %H:%M:%S')
     df['dt'] = df['dt'].dt.floor('H') #.floor for previous hour, .round for nearest hour
     return df
+
+def aggregate_by_time(df):
+    df = datetime_to_nearest_hour(df)
+    df = df.groupby(
+        ['location','dt','veh_class','lat','lon'], 
+        sort=False, 
+        as_index=False)['value'].sum()
+    return df
