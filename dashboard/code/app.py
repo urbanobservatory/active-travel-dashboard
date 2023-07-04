@@ -49,7 +49,9 @@ def chained_filter(data, f2, f3):
     print('chained_filter',f2,f3)
     datas = utils.filter_logic(datas, f2, f3)
     datas = utils.assign_colors(datas, f2)
-    return datas.to_json(orient='split', date_format='iso')
+    print('chained_data',datas)
+    datas.to_csv(f'/code/fdata-{f2}-{f3}.csv', index=False)
+    return f'/code/fdata-{f2}-{f3}.csv'
 
 @app.callback(
     Output('Filter-3', 'options'),
@@ -64,21 +66,21 @@ def update_filter_3(data, f2):
     Output('Indicator-1', 'figure'),
     Input('filtered-data', 'data'))
 def update_indicator_1(data):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     return figures.goIndicator(df, 'Records')
 
 @app.callback(
     Output('Indicator-2', 'figure'),
     Input('filtered-data', 'data'))
 def update_indicator_2(data):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     return figures.goIndicator(df, 'Locations')
 
 @app.callback(
     Output('Indicator-3', 'figure'),
     Input('filtered-data', 'data'))
 def update_indicator_3(data):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     return figures.goIndicator(df, 'Vehicle Classes')
 
 @app.callback(
@@ -86,7 +88,7 @@ def update_indicator_3(data):
     Input('filtered-data', 'data'), 
     Input('Filter-2', 'value'))
 def update_graph_1(data, f2):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     return figures.pxBar(df, f2)
 
 @app.callback(
@@ -95,7 +97,7 @@ def update_graph_1(data, f2):
     Input('Graph-1', 'hoverData'),
     Input('Graph-3', 'hoverData'))
 def update_graph_2(data, g1, g3):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     # TODO: PREVENT UPDATES WITH FILTER TRIGGER
     if 'Filter-2' == ctx.triggered_id \
     or 'Filter-3' == ctx.triggered_id:
@@ -122,7 +124,7 @@ def update_graph_2(data, g1, g3):
     Input('filtered-data', 'data'),
     Input('Filter-2', 'value'))
 def update_graph_3(data, f2):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     df = utils.total_per_location(df)
     df = utils.select_latest_times(df)
     return figures.goScatterGeo(df)
