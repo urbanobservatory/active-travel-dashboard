@@ -15,7 +15,8 @@ services:
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.frontend.rule=Host:people.dev.urbanobservatory.ac.uk"
-
+    network:
+      - web
   active-travel-cache:
     build: python_cache
     restart: on-failure
