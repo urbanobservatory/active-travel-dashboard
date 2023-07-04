@@ -1,0 +1,28 @@
+version: '3.8'
+networks:
+  web:
+    external: true
+services:
+  active-travel-dash:
+    build: dashboard
+    restart: on-failure
+    ports:
+      - 8080:80
+    volumes:
+      - .env:/env/.env
+      - ./cache/:/cache/
+      - ./dashboard/code/assets/:/assets/
+      - ./python_lib:/usr/local/lib/python3.9/site-packages/dash_data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:people.dev.urbanobservatory.ac.uk"
+
+  active-travel-cache:
+    build: python_cache
+    restart: on-failure
+    volumes:
+      - .env:/env/.env
+      - ./cache/:/cache/
+      - ./dashboard/code/assets/:/assets/
+      - ./python_lib:/usr/local/lib/python3.9/site-packages/dash_data
