@@ -28,6 +28,7 @@ app.layout = htmlLayout.layout()
     Output('all-data', 'data'), 
     Input('interval-component', 'n_intervals'))
 def get_data(n):
+    print('get_data',n)
     dfs = []
     for file in os.listdir('/cache/'):
         if '.csv' in file:

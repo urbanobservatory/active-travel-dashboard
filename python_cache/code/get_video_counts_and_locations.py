@@ -65,14 +65,22 @@ def run():
     offset = 720
 
     for i in range(30, week, offset):
+        token = refresh_token(url, username, secret)  # a token is valid for 24hrs
+
         print('fetching data: ', i)
         # get complete hours data
         past = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i+offset)).strftime("%Y-%m-%d %H:%M:00")
         current = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i)).strftime("%Y-%m-%d %H:%M:00")
 
         # get counts for 'all' locations - can be substituted with a specific location name
-        data = get_data(url,username,token,'all',past, current)
-        df = pd.DataFrame(data.json())
+        try:
+            data = get_data(url,username,token,'all',past, current)
+            df = pd.DataFrame(data.json())
+        except:
+            time.sleep(5)
+            token = refresh_token(url, username, secret)  # a token is valid for 24hrs
+            data = get_data(url, username, token, 'all', past, current)
+            df = pd.DataFrame(data.json())
         df = df[['dir','location','dt','veh_class','value']]
 
         ldf = pd.read_csv('location_coordinates.csv')
