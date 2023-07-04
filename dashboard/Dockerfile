@@ -4,4 +4,4 @@ ADD code/ /code/
 WORKDIR /code/
 ENV PYTHONUNBUFFERED=1
 
-CMD python3 app.py & gunicorn --bind 0.0.0.0:80  app:server
+CMD python3 app.py

@@ -142,3 +142,5 @@ def display_hover(hoverData, f2, f3):
         bbox, children = figures.image_hover(hoverData)
         return True, bbox, children
 
+if __name__ == '__main__':
+    app.run_server(host='0.0.0.0', port=80, debug=True)
