@@ -35,8 +35,9 @@ def get_data(n):
             print(file)
             dfs.append(pd.read_csv('/cache/'+file))
     data = pd.concat(dfs)
+    data.to_csv('/code/data.csv',index=False)
     print('done')
-    return data.to_json(orient='split', date_format='iso')
+    return '/code/data.csv'
 
 @app.callback(
     Output('filtered-data', 'data'),
@@ -44,7 +45,8 @@ def get_data(n):
     Input('Filter-2', 'value'),
     Input('Filter-3', 'value'))
 def chained_filter(data, f2, f3):
-    datas = pd.read_json(data, orient='split')
+    datas = pd.read_csv(data)
+    print(datas)
     datas = utils.filter_logic(datas, f2, f3)
     datas = utils.assign_colors(datas, f2)
     return datas.to_json(orient='split', date_format='iso')
@@ -54,7 +56,7 @@ def chained_filter(data, f2, f3):
     Input('all-data', 'data'), 
     Input('Filter-2', 'value'))
 def update_filter_3(data, f2):
-    df = pd.read_json(data, orient='split')
+    df = pd.read_csv(data)
     options = df[f2].unique().tolist()
     return options
 
