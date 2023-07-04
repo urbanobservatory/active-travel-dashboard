@@ -32,8 +32,10 @@ def get_data(n):
     dfs = []
     for file in os.listdir('/cache/'):
         if '.csv' in file:
+            print(file)
             dfs.append(pd.read_csv('/cache/'+file))
     data = pd.concat(dfs)
+    print('done')
     return data.to_json(orient='split', date_format='iso')
 
 @app.callback(
@@ -140,3 +142,4 @@ def display_hover(hoverData, f2, f3):
         bbox, children = figures.image_hover(hoverData)
         return True, bbox, children
 
+get_data(10)
