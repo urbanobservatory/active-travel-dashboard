@@ -46,7 +46,7 @@ def get_data(n):
     Input('Filter-3', 'value'))
 def chained_filter(data, f2, f3):
     datas = pd.read_csv(data)
-    print(datas)
+    print('chained_filter',f2,f3)
     datas = utils.filter_logic(datas, f2, f3)
     datas = utils.assign_colors(datas, f2)
     return datas.to_json(orient='split', date_format='iso')
