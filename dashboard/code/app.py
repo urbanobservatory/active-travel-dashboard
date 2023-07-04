@@ -142,4 +142,3 @@ def display_hover(hoverData, f2, f3):
         bbox, children = figures.image_hover(hoverData)
         return True, bbox, children
 
-get_data(10)
