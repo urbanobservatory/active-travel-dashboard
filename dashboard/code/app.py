@@ -139,10 +139,4 @@ def display_hover(hoverData, f2, f3):
     else:
         bbox, children = figures.image_hover(hoverData)
         return True, bbox, children
-    
-if __name__ == "__main__":
-    if str(os.getenv('debug')) == 'True': 
-        d=True
-    else: 
-        d=False
-    app.run_server(debug=d, host='0.0.0.0', port=80)
+
