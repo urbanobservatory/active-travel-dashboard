@@ -56,6 +56,7 @@ def get_data(url, user, token, location, from_s, to_s):
 def process_data(df):
     df = df.drop('dir', axis=1)
     df = utils.aggregate(df)
+    df = utils.change_names(df)
     return df
 
 def run():

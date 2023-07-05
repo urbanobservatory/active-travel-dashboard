@@ -52,4 +52,14 @@ def get_start_end_date(day_period=3):
     start_date = datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S')
     end_date   = datetime.strftime(end_date, '%Y-%m-%d %H:%M:%S')
     return start_date, end_date
-    
+
+def change_names(df):
+    df['veh_class'] = df['veh_class'].replace({
+        'pc': 'pedal cycle',
+        'lgv': 'light goods vehicle',
+        'mc': 'motorcycle',
+        'psv': 'passenger service vehicle',
+        'ogv1': 'other goods vehicle (class 1)',
+        'ogv2': 'other goods vehicle (class 2)'
+    })
+    return df

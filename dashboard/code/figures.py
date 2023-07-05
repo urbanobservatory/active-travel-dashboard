@@ -38,7 +38,7 @@ def goScatter(df):
             yaxis='y', 
             text=tdf['value'].astype(str), 
             mode='lines+markers',
-            line_shape='spline',
+            # line_shape='spline',
             opacity = 0.5
         ))
     fig.update_layout(
