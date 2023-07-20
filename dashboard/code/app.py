@@ -48,7 +48,7 @@ def chained_filter(data, f2, f3):
     datas = pd.read_csv(data)
     print('chained_filter',f2,f3)
     datas = utils.filter_logic(datas, f2, f3)
-    datas = utils.assign_colors(datas, f2)
+    # datas = utils.assign_colors(datas, f2)
     print('chained_data',datas)
     datas.to_csv(f'/code/fdata-{f2}-{f3}.csv', index=False)
     return f'/code/fdata-{f2}-{f3}.csv'

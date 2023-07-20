@@ -41,7 +41,7 @@ def datetime_to_nearest_hour(df):
 def aggregate(df):
     # df = datetime_to_nearest_hour(df)
     df = df.groupby(
-        ['location','dt','veh_class','lat','lon'], 
+        ['location','dt','veh_class','lat','lon','color'], 
         sort=False, 
         as_index=False)['value'].sum()
     return df

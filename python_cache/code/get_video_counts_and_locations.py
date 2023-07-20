@@ -85,11 +85,13 @@ def run():
         df = df[['dir','location','dt','veh_class','value']]
 
         ldf = pd.read_csv('location_coordinates.csv')
+        cdf = pd.read_csv('class_colors.csv')
         df = pd.merge(df, ldf, on=['location'])
+        df = pd.merge(df, cdf, on=['veh_class'])
         df['dt'] = pd.to_datetime(df['dt'])
 
         df = process_data(df)
-        df.to_csv(f'/cache/test{i}.csv')
+        df.to_csv(f'/cache/{i}.csv')
 
 if __name__ == '__main__':
     while True:

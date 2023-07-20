@@ -30,14 +30,17 @@ def goScatter(df):
     groups = df['veh_class'].unique()
     for group in groups:
         tdf = df[df['veh_class'] == group]
+        print(tdf)
         fig.add_trace(go.Scatter(
             name=group, 
             x=list(tdf['dt']), 
             y=list(tdf['value']), 
             xaxis='x', 
             yaxis='y', 
-            text=tdf['value'].astype(str), 
+            text=tdf['value'].astype(str),
             mode='lines+markers',
+            marker_color=tdf['color'].iloc[0],
+            line_color=tdf['color'].iloc[0],
             # line_shape='spline',
             opacity = 0.5
         ))
