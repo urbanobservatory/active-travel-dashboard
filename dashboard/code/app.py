@@ -7,7 +7,6 @@ from dash.exceptions import PreventUpdate
 import htmlLayout
 import figures
 from dash_data import utils
-# import python_cache.code.get_video_counts_and_locations as get_video_counts_and_locations
 import pandas as pd
 from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
@@ -57,7 +56,7 @@ def chained_filter(data, f2, f3):
     Output('Filter-3', 'options'),
     Input('all-data', 'data'), 
     Input('Filter-2', 'value'))
-def update_filter_3(data, f2):
+def filter_options(data, f2):
     df = pd.read_csv(data)
     options = df[f2].unique().tolist()
     return options

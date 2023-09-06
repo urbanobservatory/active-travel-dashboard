@@ -60,6 +60,7 @@ def pxScatterGeo(df):
     return fig
 
 def goScatterGeo(df):
+    normalised_value = (df['value']-df['value'].min())/(df['value'].max()-df['value'].min())
     fig = go.Figure()
     fig.add_trace(go.Scattermapbox(
         # name=group,
@@ -68,8 +69,8 @@ def goScatterGeo(df):
         lat=df['lat'],
         mode='markers',
         marker=go.scattermapbox.Marker(
-            size=20, opacity=0.5, symbol='circle', color=df['value'],
-            colorscale='viridis_r', cmax=df['value'].max(), showscale=True
+            size=(normalised_value*50)+10, opacity=0.5, symbol='circle', color=df['value'],
+            colorscale='Bluered', cmax=df['value'].max(), showscale=True
         )
     ))
     fig.update_layout(
