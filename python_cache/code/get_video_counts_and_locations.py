@@ -27,6 +27,7 @@ def refresh_token(url, user, secret):
     e = url + '/refresh_token'
     d = {'device_id': user, 'secret': secret}
     response = requests.put(url=e, json=d)
+    print('refresh token: ', response)
     resp_j = response.json()
     token = resp_j['token']
     return token
@@ -41,6 +42,7 @@ def get_data(url, user, token, location, from_s, to_s):
         'to': to_s
     }
     response = requests.get(url=e, json=d)
+    print('get data: ', response)
     return response
 
 # def get_locations(url, user, token, location):
@@ -56,8 +58,8 @@ def get_data(url, user, token, location, from_s, to_s):
 def process_data(df):
     df = df.drop('dir', axis=1)
     df = df[df['veh_class'].str.contains('head')==False]
-    df = utils.aggregate(df)
     df = utils.change_names(df)
+    df = utils.aggregate(df)
     return df
 
 def run():
@@ -85,13 +87,14 @@ def run():
             df = pd.DataFrame(data.json())
         df = df[['dir','location','dt','veh_class','value']]
 
+        df = process_data(df)
+
         ldf = pd.read_csv('location_coordinates.csv')
         cdf = pd.read_csv('class_colors.csv')
         df = pd.merge(df, ldf, on=['location'])
         df = pd.merge(df, cdf, on=['veh_class'])
         df['dt'] = pd.to_datetime(df['dt'])
 
-        df = process_data(df)
         df.to_csv(f'/cache/{i}.csv')
 
 if __name__ == '__main__':

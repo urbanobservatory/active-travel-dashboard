@@ -41,7 +41,7 @@ def datetime_to_nearest_hour(df):
 def aggregate(df):
     # df = datetime_to_nearest_hour(df)
     df = df.groupby(
-        ['location','dt','veh_class','lat','lon','color'], 
+        ['location','dt','veh_class'],
         sort=False, 
         as_index=False)['value'].sum()
     return df
@@ -55,11 +55,11 @@ def get_start_end_date(day_period=3):
 
 def change_names(df):
     df['veh_class'] = df['veh_class'].replace({
-        'pc': 'pedal cycle',
-        'lgv': 'light goods vehicle',
+        'pc': 'cyclist',
+        'lgv': 'goods vehicle',
         'mc': 'motorcycle',
-        'psv': 'passenger service vehicle',
-        'ogv1': 'other goods vehicle (class 1)',
-        'ogv2': 'other goods vehicle (class 2)'
+        'psv': 'bus',
+        'ogv1': 'goods vehicle',
+        'ogv2': 'goods vehicle'
     })
     return df

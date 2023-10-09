@@ -2,14 +2,10 @@ veh_class,color
 person,#636EFA
 car,#EF553B
 cyclist,#00CC96
-buggy,#FFA15A
-pc,#19D3F3
-lgv,#FF6692
-mc,#B6E880
-psv,#FF97FF
-ogv1,#FECB52
-ovg2,#4C78A8
-scooter,#F58518
-van,#E45756
-truck,#72B7B2
-bus,#54A24B
+buggy,#AB63FA
+goods vehicle,#FFA15A
+motorcycle,#19D3F3
+bus,#FF6692
+scooter,#B6E880
+van,#FF97FF
+truck,#FECB52
