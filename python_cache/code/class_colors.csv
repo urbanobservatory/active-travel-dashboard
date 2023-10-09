@@ -1,8 +1,7 @@
 veh_class,color
 person,#636EFA
 car,#EF553B
-head,#00CC96
-cyclist,#AB63FA
+cyclist,#00CC96
 buggy,#FFA15A
 pc,#19D3F3
 lgv,#FF6692
