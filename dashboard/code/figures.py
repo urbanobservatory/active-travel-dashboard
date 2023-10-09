@@ -4,21 +4,21 @@ import plotly.graph_objects as go
 import themes
 from dash import html
 
-def pxBar(df, filter_val):
+def pxBar(df):
     df['text']=df['location'].astype(str)
     fig = px.bar(
         df, 
         x='dt', 
         y='value', 
-        color=filter_val, 
+        color='veh_class',
         hover_name='text',
-        color_discrete_map=dict(zip(df[filter_val], df['color']))
+        color_discrete_map=dict(zip(df['veh_class'], df['color']))
     )
     fig = themes.one(fig)
     fig.update_layout(
         title={'text': 'Active Travel Total', 'x': 0.5},
         showlegend=False,
-        transition_duration=500, 
+        transition_duration=500,
         xaxis_title=None, 
         yaxis_title=None,
         margin = {'t':60, 'b':50, 'l':50, 'r':50}
@@ -105,7 +105,7 @@ def goIndicator(df, filter_val):
         value=len(df.index)
     elif filter_val=='Locations':
         value=df['location'].nunique()
-    elif filter_val=='Vehicle Classes':
+    elif filter_val=='Travel Modes':
         value=df['veh_class'].nunique()
     # elif filter_val=='Directions':
     #     value=df['dir'].nunique()

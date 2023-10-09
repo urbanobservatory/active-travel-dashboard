@@ -39,69 +39,70 @@ def get_data(n):
     return '/code/data.csv'
 
 @app.callback(
-    Output('filtered-data', 'data'),
-    Input('all-data', 'data'), 
-    Input('Filter-2', 'value'),
-    Input('Filter-3', 'value'))
-def chained_filter(data, f2, f3):
-    datas = pd.read_csv(data)
-    print('chained_filter',f2,f3)
-    datas = utils.filter_logic(datas, f2, f3)
-    # datas = utils.assign_colors(datas, f2)
-    print('chained_data',datas)
-    datas.to_csv(f'/code/fdata-{f2}-{f3}.csv', index=False)
-    return f'/code/fdata-{f2}-{f3}.csv'
-
-@app.callback(
-    Output('Filter-3', 'options'),
-    Input('all-data', 'data'), 
-    Input('Filter-2', 'value'))
-def filter_options(data, f2):
-    df = pd.read_csv(data)
-    options = df[f2].unique().tolist()
-    return options
+    Output('Filter', 'value'),
+    Input('active-travel-button', 'n_clicks'),
+    Input('vehicle-travel-button', 'n_clicks'),
+    Input('all-travel-button', 'n_clicks'),
+    prevent_initial_call=True,
+)
+def filter_values(active_n_clicks, vehcile_n_clicks, all_n_clicks):
+    if 'active-travel-button' == ctx.triggered_id:
+        value = ['person', 'cyclist', 'scooter']
+    elif 'vehicle-travel-button' == ctx.triggered_id:
+        value = ['car','buggy','goods vehicle','motorcycle','bus','van','truck']
+    elif 'all-travel-button' == ctx.triggered_id:
+        value = ['person','cyclist','scooter','car','buggy','goods vehicle',
+                 'motorcycle','bus','van','truck']
+    return value
 
 @app.callback(
     Output('Indicator-1', 'figure'),
-    Input('filtered-data', 'data'))
-def update_indicator_1(data):
+    Input('all-data', 'data'),
+    Input('Filter', 'value'))
+def update_indicator_1(data, value):
     df = pd.read_csv(data)
+    df = df[df['veh_class'].isin(value)]
     return figures.goIndicator(df, 'Records')
 
 @app.callback(
     Output('Indicator-2', 'figure'),
-    Input('filtered-data', 'data'))
-def update_indicator_2(data):
+    Input('all-data', 'data'),
+    Input('Filter', 'value'))
+def update_indicator_2(data, value):
     df = pd.read_csv(data)
+    df = df[df['veh_class'].isin(value)]
     return figures.goIndicator(df, 'Locations')
 
 @app.callback(
     Output('Indicator-3', 'figure'),
-    Input('filtered-data', 'data'))
-def update_indicator_3(data):
+    Input('all-data', 'data'),
+    Input('Filter', 'value'))
+def update_indicator_3(data, value):
     df = pd.read_csv(data)
-    return figures.goIndicator(df, 'Vehicle Classes')
+    df = df[df['veh_class'].isin(value)]
+    return figures.goIndicator(df, 'Travel Modes')
 
 @app.callback(
     Output('Graph-1', 'figure'),
-    Input('filtered-data', 'data'), 
-    Input('Filter-2', 'value'))
-def update_graph_1(data, f2):
+    Input('all-data', 'data'),
+    Input('Filter', 'value'))
+def update_graph_1(data, value):
     df = pd.read_csv(data)
-    return figures.pxBar(df, f2)
+    df = df[df['veh_class'].isin(value)]
+    return figures.pxBar(df)
 
 @app.callback(
     Output('Graph-2', 'figure'),
-    Input('filtered-data', 'data'), 
+    Input('all-data', 'data'),
     Input('Graph-1', 'hoverData'),
-    Input('Graph-3', 'hoverData'))
-def update_graph_2(data, g1, g3):
+    Input('Graph-3', 'hoverData'),
+    Input('Filter', 'value'))
+def update_graph_2(data, g1, g3, value):
     df = pd.read_csv(data)
-    # TODO: PREVENT UPDATES WITH FILTER TRIGGER
-    if 'Filter-2' == ctx.triggered_id \
-    or 'Filter-3' == ctx.triggered_id:
+    df = df[df['veh_class'].isin(value)]
+    if 'Filter' == ctx.triggered_id:
         raise PreventUpdate
-    elif 'filtered-data' == ctx.triggered_id:
+    elif 'all-data' == ctx.triggered_id:
         random_df = df.sample().reset_index()
         random_id = random_df['location'].iloc[0]
         df = df.loc[df['location'] == random_id]
@@ -112,7 +113,7 @@ def update_graph_2(data, g1, g3):
         id = g3['points'][0]['text'].split(':')[0]
         df = df.loc[df['location'].isin([id])]
     df['dt'] = pd.to_datetime(df['dt'], format='%Y-%m-%d %H:%M:%S')
-    df.sort_values(by='dt', inplace = True)
+    df.sort_values(by='dt', inplace=True)
     start_date, end_date = utils.get_start_end_date(day_period=2)
     mask = (df['dt'] > start_date) & (df['dt'] <= end_date)
     df = df.loc[mask]
@@ -120,10 +121,11 @@ def update_graph_2(data, g1, g3):
 
 @app.callback(
     Output('Graph-3', 'figure'),
-    Input('filtered-data', 'data'),
-    Input('Filter-2', 'value'))
-def update_graph_3(data, f2):
+    Input('all-data', 'data'),
+    Input('Filter', 'value'))
+def update_graph_3(data, value):
     df = pd.read_csv(data)
+    df = df[df['veh_class'].isin(value)]
     df = utils.total_per_location(df)
     df = utils.select_latest_times(df)
     return figures.goScatterGeo(df)
@@ -134,12 +136,9 @@ def update_graph_3(data, f2):
     Output('Graph-3-tooltip', 'bbox'),
     Output('Graph-3-tooltip', 'children'),
     Input('Graph-3', 'hoverData'),  
-    Input('Filter-2', 'value'),
-    Input('Filter-3', 'value'))
-def display_hover(hoverData, f2, f3):
-    if 'Filter-2' == ctx.triggered_id \
-    or 'Filter-3' == ctx.triggered_id \
-    or hoverData is None:
+    Input('Filter', 'value'))
+def display_hover(hoverData, value):
+    if 'Filter' == ctx.triggered_id or hoverData is None:
         return False, no_update, no_update
     else:
         bbox, children = figures.image_hover(hoverData)

@@ -22,25 +22,50 @@ def layout():
           #   count=1, 
           #   value=[-7, 0]
           # ),
-          # html.Br(),
-          html.H3('Display by:'),
-          dcc.RadioItems(
-            id='Filter-2',
-            options=[
-                {'label': 'Vehicle Class', 'value': 'veh_class'},
-                {'label': 'Location', 'value': 'location'},
-            ],
-            value='veh_class'
-          ),
+          html.H3('Select Modes of Travel:'),
           html.Br(),
-          html.H3('Filter by:'),
+          html.Div([
+            dbc.Button(
+              'All',
+              id='all-travel-button',
+              n_clicks=0,
+              className='me-1',
+              outline=True,
+              color='primary',
+              size='lg',
+            ),
+            dbc.Button(
+              'Active Travel',
+              id='active-travel-button',
+              n_clicks=0,
+              className='me-1',
+              outline=True,
+              color='primary',
+              size='lg'
+            ),
+            dbc.Button(
+              'Vehicle Travel',
+              id='vehicle-travel-button',
+              n_clicks=0,
+              className='me-1',
+              outline=True,
+              color='primary',
+              size='lg'
+            )
+          ], className='d-grid gap-2'),
+          html.Br(),
           dcc.Dropdown(
-            id='Filter-3',
+            id='Filter',
             multi=True,
-            placeholder='All'
+            placeholder='All',
+            options=[
+              'person','car','cyclist','buggy','goods vehicle','motorcycle',
+              'bus','scooter','van','truck'
+            ],
+            value=['person','cyclist','scooter']
           ),
         ], className='selection box')
-      ], xs=12, sm=12, md=12, lg=4, xl=4),
+      ], xs=12, sm=12, md=12, lg=3, xl=3),
       dbc.Col([
         dbc.Stack([
           dbc.Row([
@@ -88,7 +113,7 @@ def layout():
             ], xs=12, sm=12, md=12, lg=12, xl=12)
           ])
         ], gap=5)
-      ], xs=12, sm=12, md=12, lg=8, xl=8)
+      ], xs=12, sm=12, md=12, lg=9, xl=9)
     ], className='g-5'), # gutter size
 
     html.Br(),
