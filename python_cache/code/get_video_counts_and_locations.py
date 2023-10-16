@@ -69,37 +69,31 @@ def run():
     offset = 720
 
     for i in range(30, week, offset):
-        token = refresh_token(url, username, secret)  # a token is valid for 24hrs
-
         print('fetching data: ', i)
         # get complete hours data
         past = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i+offset)).strftime("%Y-%m-%d %H:%M:00")
         current = (datetime.datetime.utcnow() - datetime.timedelta(minutes=i)).strftime("%Y-%m-%d %H:%M:00")
 
         # get counts for 'all' locations - can be substituted with a specific location name
-        try:
-            data = get_data(url,username,token,'all',past, current)
-            df = pd.DataFrame(data.json())
-        except:
-            time.sleep(5)
-            token = refresh_token(url, username, secret)  # a token is valid for 24hrs
-            data = get_data(url, username, token, 'all', past, current)
-            df = pd.DataFrame(data.json())
+        data = get_data(url,username,token,'all',past, current)
+        df = pd.DataFrame(data.json())
+
         df = df[['dir','location','dt','veh_class','value']]
-
         df = process_data(df)
-
         ldf = pd.read_csv('location_coordinates.csv')
         cdf = pd.read_csv('class_colors.csv')
         df = pd.merge(df, ldf, on=['location'])
         df = pd.merge(df, cdf, on=['veh_class'])
         df['dt'] = pd.to_datetime(df['dt'])
-
         df.to_csv(f'/cache/{i}.csv')
 
 if __name__ == '__main__':
     while True:
-        df = run()
+        try:
+            df = run()
+        except:
+            time.sleep(300)
+            continue
         print('fetching images')
         median_pictures_from_s3.get_images()
         print('sleeping')
