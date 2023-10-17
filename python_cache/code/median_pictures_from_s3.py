@@ -46,7 +46,8 @@ def get_images():
             print('resizing: ', filename)
             img = cv2.imread(local_folder+filename)
             img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
-            cv2.imwrite(local_folder+filename, img)
+            f = filename.split('.')[0]+'.'+filename.split('.')[1] # removes any strange extra extensions after .jpg
+            cv2.imwrite(local_folder+f, img)
 
 
 if __name__ == '__main__':
