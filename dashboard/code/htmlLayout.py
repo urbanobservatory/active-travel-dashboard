@@ -3,12 +3,12 @@ import dash_bootstrap_components as dbc
 
 def layout():
   return dbc.Container([
-    dbc.Row([
-      dbc.Col([html.H1(
-        'Tyne and Wear Active Travel',
-        className='text-center mb-4'
-      )], width=12)
-    ]),
+    # dbc.Row([
+    #   dbc.Col([html.H1(
+    #     'Tyne and Wear Active Travel',
+    #     className='text-center mb-4'
+    #   )], width=12)
+    # ]),
 
     dbc.Row([
       dbc.Col([
