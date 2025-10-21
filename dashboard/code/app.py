@@ -1,6 +1,6 @@
 import os
 import dash
-from dash import ctx, no_update
+from dash import ctx, no_update, Patch
 from dash.dependencies import Output, Input, State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -27,15 +27,12 @@ app.layout = htmlLayout.layout()
     Output('all-data', 'data'), 
     Input('interval-component', 'n_intervals'))
 def get_data(n):
-    print('get_data',n)
     dfs = []
     for file in os.listdir('/cache/'):
         if '.csv' in file:
-            print(file)
             dfs.append(pd.read_csv('/cache/'+file))
     data = pd.concat(dfs)
     data.to_csv('/code/data.csv',index=False)
-    print('done')
     return '/code/data.csv'
 
 @app.callback(
@@ -89,7 +86,29 @@ def update_indicator_3(data, value):
 def update_graph_1(data, value):
     df = pd.read_csv(data)
     df = df[df['veh_class'].isin(value)]
+    # df.sort_values('location')
     return figures.pxBar(df)
+
+# TODO: Updates graph 1 location colors based on map hover. Match df index
+#  locations with patched figure locations
+# @app.callback(
+#     Output('Graph-1','figure', True),
+#     Input('Graph-3','hoverData'),
+#     Input('all-data','data'),
+#     Input('Filter', 'value'),
+#     prevent_initial_call=True)
+# def update_graph_1_color(hoverData, data, value):
+#     id = hoverData['points'][0]['text'].split(':')[0]
+#     df = pd.read_csv(data)
+#     df = df[df['veh_class'].isin(value)]
+#     # df.sort_values('location')
+#     locations = list(df.loc[df['location'] == id].index) # gets index positions which need to be changed in patched figure
+#     patched_figure = Patch()
+#     updated_markers = [
+#         "white" if i in locations else "blue" for i in range(len(df))
+#     ]
+#     patched_figure['data'][1]['marker']['color'] = updated_markers
+#     return patched_figure
 
 @app.callback(
     Output('Graph-2', 'figure'),
@@ -145,4 +164,4 @@ def display_hover(hoverData, value):
         return True, bbox, children
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=80, debug=True)

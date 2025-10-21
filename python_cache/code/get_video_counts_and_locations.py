@@ -90,11 +90,16 @@ def run():
 if __name__ == '__main__':
     while True:
         try:
+            print("fetching counts")
             df = run()
-        except:
+        except Exception as e:
+            print("failed to fetch counts: ", e)
             time.sleep(300)
             continue
-        print('fetching images')
-        median_pictures_from_s3.get_images()
+        try:
+            print('fetching images')
+            median_pictures_from_s3.get_images()
+        except Exception as e:
+            print("failed to fetch images: ", e)
         print('sleeping')
         time.sleep(300)
