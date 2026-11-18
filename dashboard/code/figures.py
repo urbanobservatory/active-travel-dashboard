@@ -62,28 +62,26 @@ def pxScatterGeo(df):
 def goScatterGeo(df):
     normalised_value = (df['value']-df['value'].min())/(df['value'].max()-df['value'].min())
     fig = go.Figure()
-    fig.add_trace(go.Scattermapbox(
-        # name=group,
+    fig.add_trace(go.Scattermap(
         text=df['location'].astype(str)+': '+df['value'].astype(str),
         lon=df['lon'],
         lat=df['lat'],
         mode='markers',
-        marker=go.scattermapbox.Marker(
-            size=(normalised_value*50)+10, opacity=0.5, symbol='circle', color=df['value'],
+        marker=go.scattermap.Marker(
+            size=(normalised_value*50)+10, opacity=0.5, color=df['value'],
             colorscale='Bluered', cmax=df['value'].max(), showscale=True
         )
     ))
     fig.update_layout(
-        autosize = True,
+        autosize=True,
         transition_duration=500,
-        # height = 1236,
-        margin = {'t':10, 'b':10, 'l':10, 'r':0},
-        mapbox = {
-            'style': 'carto-positron', 
-            'center': go.layout.mapbox.Center(
-                lat=df['lat'].median(), 
-                lon=df['lon'].median()), 
-            'zoom': 9.7 })
+        margin={'t': 10, 'b': 10, 'l': 10, 'r': 0},
+        map={
+            'style': 'https://tiles.openfreemap.org/styles/bright',
+            'center': go.layout.map.Center(
+                lat=df['lat'].median(),
+                lon=df['lon'].median()),
+            'zoom': 9.7})
     fig.update_traces(hoverinfo="none", hovertemplate=None)
     fig = themes.one(fig)
     return fig
